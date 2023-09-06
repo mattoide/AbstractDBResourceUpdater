@@ -10,78 +10,71 @@ let db = new sqlite3.Database('./data.db', (err) => {
     console.log('Connected to database.');
 });
 
-getRes(function (err, res){
-    if(err)
+getRes(function (err, res) {
+    if (err)
         console.log(err)
     if (res)
-        console.log('res')
+        console.log(res)
 })
 
-function getRes(cb){
-    let sql = `SELECT * FROM files WHERE url LIKE ?`;
+function getRes(cb) {
 
-    db.all(sql, [replace_this+"%"], (err,rows) =>{
+    let sql = `SELECT *
+               FROM files
+               WHERE url LIKE ?`;
 
-        if(err){
+    db.all(sql, [replace_this + "%"], (err, rows) => {
+
+        if (err) {
             console.log("Error:")
             console.log(err)
         }
 
+        if (rows && rows.length > 0) {
 
-        if (rows && rows.length > 0){
+            rows.forEach(row => {
 
-            rows.forEach(row =>{
                 let url = row.url.replace(replace_this, with_this);
 
-                let sql = `UPDATE files SET url = ? WHERE url = ?`;
+                let sql = `UPDATE files
+                           SET url = ?
+                           WHERE url = ?`;
 
-                db.all(sql, [url, row.url], (err, rows) =>{
-                   if(err){
-                       console.log("err update")
-                       console.log(err)
+                db.all(sql, [url, row.url], (err, rows) => {
+                    if (err) {
+                        console.log("err update")
+                        console.log(err)
+                    }
 
-                   }
+                    if (rows && rows.length > 0) {
+                        console.log("rows update")
+                        console.log(rows)
+                    }
+                });
+
+                let formats = "";
+
+                if (row.formats) {
+                    formats = row.formats.replaceAll(replace_this, with_this);
+                }
+
+                sql = `UPDATE files
+                       SET formats = ?
+                       WHERE formats = ?`;
+
+                db.all(sql, [formats, row.formats], (err, rows) => {
+
+                    if (err) {
+                        console.log("err update")
+                        console.log(err)
+                    }
 
                     if (rows && rows.length > 0) {
                         console.log("rows uodate")
                         console.log(rows)
                     }
                 });
-
-                let urlch4 = "";
-
-                if(row.formats) {
-
-
-                    let formats = row.formats.replace(replace_this, with_this);
-
-
-                    let urlch1 = formats.toString().replace(replace_this, with_this)
-                    let urlch2 = urlch1.toString().replace(replace_this, with_this)
-                    let urlch3 = urlch2.toString().replace(replace_this, with_this)
-                     urlch4 = urlch3.toString().replace(replace_this, with_this)
-                }
-                    sql = `UPDATE files
-                           SET formats = ?
-                           WHERE formats = ?`;
-
-                    db.all(sql, [urlch4, row.formats], (err, rows) => {
-                        if (err) {
-                            console.log("err update")
-                            console.log(err)
-
-                        }
-
-                        if (rows && rows.length > 0) {
-                            console.log("rows uodate")
-                            console.log(rows)
-                        }
-                    });
-
-
-
             })
-
 
             cb(null, "urls")
 
