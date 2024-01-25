@@ -1,7 +1,12 @@
 const sqlite3 = require('sqlite3').verbose();
 
-const replace_this = "https://media.abstract.it/media/"
-const with_this = "https://media.abstract.it/dev-media/"
+/*** PROD TO DEV ***/
+// const replace_this = "https://media.abstract.it/media/"
+// const with_this = "https://media.abstract.it/dev-media/"
+
+/*** DEV TO PROD ***/
+const replace_this = "https://media.abstract.it/dev-media/"
+const with_this = "https://media.abstract.it/media/"
 
 let db = new sqlite3.Database('./data.db', (err) => {
     if (err) {
